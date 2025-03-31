@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English songs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #628cb6, #121212);
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+        .playlist-header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+        }
+        .playlist-header img {
+            width: 150px;
+            height: 150px;
+            border-radius: 10px;
+            margin-right: 20px;
+        }
+        .playlist-info {
+            flex-grow: 1;
+        }
+        .playlist-info h1 {
+            font-size: 36px;
+            margin: 0;
+        }
+        .playlist-info p {
+            font-size: 16px;
+            color: #ddd;
+        }
+        .song-list {
+            width: 90%;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .song {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .song img {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            margin-right: 15px;
+        }
+        .song-title {
+            flex-grow: 1;
+        }
+        .audio-container {
+        display: flex;
+        align-items: center;
+        gap: 10px; /* Adds space between audio and button */
+    }
+        audio {
+        border: none;
+        background: none;
+        width: 250px; /* Reduce audio player width */
+        margin-top: 0; /* Remove top margin */
+    }
+        .duration {
+            color: #bbb;
+            margin-top: 5px;
+        }
+        .back-btn {
+            display: inline-block;
+            background: #4cfafa;
+            padding: 10px 20px;
+            margin: 20px;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .add-to-playlist-btn {
+            background: #4cfafa;
+            padding: 5px 10px;
+            color: black;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: #121212;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            border-radius: 10px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .add{
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Playlist Header -->
+    <div class="playlist-header">
+        <img src="{{ url_for('static', filename='images/english.jpg')}}" alt="Happy Playlist">
+        <div class="playlist-info">
+            <h1>English Songs</h1>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <a class="back-btn" href="/index">Back</a>
+
+    <!-- Song List -->
+    <div class="song-list">
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/wdta_cp.jpg') }}" alt="Album Cover">
+            <div class="song-title">
+                <strong>We Don't Talk Anymore (feat. Selena Gomez)</strong><br>
+                <small>Charlie Puth</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/wdta_cp.mp3') }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(16)">+</button>
+            </div>
+        </div>
+
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/attention_cp.jpg') }}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Attention</strong><br>
+                <small>Charlie Puth</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/attention_cp.mp3') }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(17)">+</button>
+            </div>
+        </div>
+
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/lightswitch_cp.jpg') }}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Light Switch</strong><br>
+                <small>Charlie Puth</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/lightswitch_cp.mp3') }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(18)">+</button>
+            </div>
+        </div>
+
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/lndr_cp.jpg') }}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Left and Right (feat. Jungkook of BTS)</strong><br>
+                <small>Charlie Puth</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/lar_cp.mp3') }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(19)">+</button>
+            </div>
+        </div>
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/shapeofu_es.jpg') }}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Perfect</strong><br>
+                <small>Ed Sheeran</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/perfect_es.mp3') }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(5)">+</button>
+            </div>
+        </div>
+
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/shapeofu_es.jpg') }}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Shape of You</strong><br>
+                <small>Ed Sheeran</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/shapeofu_es.mp3') }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(6)">+</button>
+            </div>
+        </div>
+
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/happier_es.jpg') }}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Happier</strong><br>
+                <small>Ed Sheeran</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/happier_es.mp3') }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(7)">+</button>
+            </div>
+        </div>
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/jb_baby.jpg') }}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Baby</strong><br>
+                <small>Justin Bieber</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/jb_baby.mp3') }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(84)">+</button>
+            </div>
+        </div>
+
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/jb_eenie.jpg') }}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Eenie Meenie</strong><br>
+                <small>Justin Bieber</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/jb_eenie.mp3') }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(85)">+</button>
+            </div>
+        </div>
+
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/jb_favgirl.jpg') }}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Favorite Girl</strong><br>
+                <small>Justin Bieber</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/jb_favgirl.mp3') }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(86)">+</button>
+            </div>
+        </div>
+
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/jb_ghost.jpg') }}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Ghost</strong><br>
+                <small>Justin Bieber</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/jb_ghost.mp3') }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(87)">+</button>
+            </div>
+        </div>
+
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/jb_letmeluvu.jpg') }}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Let Me Love You</strong><br>
+                <small>Justin Bieber</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/jb_letmeluvu.mp3') }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(88)">+</button>
+            </div>
+        </div>
+
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/jb_oneless.jpg') }}" alt="Album Cover">
+            <div class="song-title">
+                <strong>One Less Lonely Girl</strong><br>
+                <small>Justin Bieber</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/jb_oneless.mp3') }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(89)">+</button>
+            </div>
+        </div>
+
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/jb_stay.jpg') }}" alt="Album Cover">
+            <div class="song-title">
+                <strong>STAY</strong><br>
+                <small>Justin Bieber</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/jb_stay.mp3') }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(90)">+</button>
+            </div>
+        </div>
+
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/jb_loveyours.jpg') }}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Love Yourself</strong><br>
+                <small>Justin Bieber</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/jb_loveyours.mp3') }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(91)">+</button>
+            </div>
+        </div>
+
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/jb_yummy.jpg') }}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Yummy</strong><br>
+                <small>Justin Bieber</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/jb_yummy.mp3') }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(92)">+</button>
+            </div>
+        </div>
+
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/jb_loveme.jpg') }}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Love Me</strong><br>
+                <small>Justin Bieber</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/jb_loveme.mp3') }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(93)">+</button>
+            </div>
+        </div>
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/shapeofu_es.jpg') }}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Perfect</strong><br>
+                <small>Ed Sheeran</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/perfect_es.mp3') }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(5)">+</button>
+            </div>
+        </div>
+
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/shapeofu_es.jpg') }}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Shape of You</strong><br>
+                <small>Ed Sheeran</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/shapeofu_es.mp3') }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(6)">+</button>
+            </div>
+        </div>
+
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/happier_es.jpg') }}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Happier</strong><br>
+                <small>Ed Sheeran</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/happier_es.mp3') }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(7)">+</button>
+            </div>
+        </div>
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/tslovestory.jpg')}}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Love story</strong><br>
+                <small>Taylor Swift</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='mp3/lovestory_ts.mp3')}}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(1)">+</button>
+            </div>
+        </div>
+
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/shakeitoff_ts.jpg')}}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Shake it off</strong><br>
+                <small>Taylor Swift</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='/mp3/shakeitoff_ts.mp3')}}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(2)">+</button>
+            </div>
+        </div>
+
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/blankspace.jpeg')}}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Blank space</strong><br>
+                <small>Taylor Swift</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='/mp3/blankspace_ts.mp3')}}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(3)">+</button>
+            </div>
+        </div>
+
+        <div class="song">
+            <img src="{{ url_for('static', filename='images/enchanted_ts.jpg')}}" alt="Album Cover">
+            <div class="song-title">
+                <strong>Enchanted</strong><br>
+                <small>Taylor Swift</small>
+            </div>
+            <div class="audio-container">
+                <audio controls>
+                    <source src="{{ url_for('static', filename='/mp3/enchanted_ts.mp3')}}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button class="add-to-playlist-btn" onclick="openModal(4)">+</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="playlistModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Add to Playlist</h2>
+            <div id="playlistList"></div>
+            <button class="add" onclick="addSongToPlaylist()">Add</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedSongId = null;
+
+        // Open modal and fetch playlists
+        function openModal(songId) {
+            selectedSongId = songId;
+            document.getElementById('playlistModal').style.display = 'block';
+            fetchPlaylists();
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('playlistModal').style.display = 'none';
+        }
+
+        // Fetch playlists from the server
+        function fetchPlaylists() {
+            fetch('/get_playlists')
+                .then(response => response.json())
+                .then(data => {
+                    const playlistList = document.getElementById('playlistList');
+                    playlistList.innerHTML = '';
+                    if (data.length === 0) {
+                        playlistList.innerHTML = '<p>No playlists found. Create one first!</p>';
+                    } else {
+                        data.forEach(playlist => {
+                            const div = document.createElement('div');
+                            div.innerHTML = `
+                                <input type="radio" name="playlist" value="${playlist.id}">
+                                <label>${playlist.name}</label>
+                            `;
+                            playlistList.appendChild(div);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching playlists:', error);
+                    alert('Failed to fetch playlists. Please try again.');
+                });
+        }
+
+        // Add song to the selected playlist
+        function addSongToPlaylist() {
+            const selectedPlaylist = document.querySelector('input[name="playlist"]:checked');
+            if (selectedPlaylist && selectedSongId) {
+                const playlistId = selectedPlaylist.value;
+
+                fetch('/add_song_to_playlist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        playlist_id: playlistId,
+                        song_id: selectedSongId
+                    }),
+                })
+                .then(response => {
+                    // Parse both success and error responses
+                    return response.json().then(data => {
+                        if (!response.ok) {
+                            throw data; // Throw the parsed error data
+                        }
+                        return data;
+                    });
+                })
+                .then(data => {
+                    alert('Song added to playlist successfully');
+                    closeModal();
+                    window.location.href = '/create-playlist';
+                })
+                .catch(error => {
+                    // Handle specific error messages
+                    if (error.error === 'Song already in playlist') {
+                        alert('This song is already in the selected playlist.');
+                    } else {
+                        console.error('Error:', error);
+                        alert('Failed to add song to playlist: ' + (error.error || 'Unknown error'));
+                    }
+                });
+            } else {
+                alert('Please select a playlist');
+            }
+        }
+    </script>
+
+</body>
+</html>

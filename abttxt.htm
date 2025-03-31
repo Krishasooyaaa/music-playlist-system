@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TXT - Artist Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            color: white;
+            background: url('/static/images/txtbg.jpg') no-repeat center center/cover;
+            height: 100vh;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+            padding: 40px;
+            position: relative;
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3); /* Dark overlay for readability */
+        }
+        .container {
+            position: relative;
+            z-index: 2;
+            text-align: left;
+            max-width: 500px;
+        }
+        p {
+            font-size: 1.2rem;
+            margin: 5px 0;
+        }
+        .ranking {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: blue;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        strong {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="container">
+        <p><strong>6,318,092</strong> monthly listeners</p>
+        <p>Tomorrow X Together has a growing presence on Spotify.<strong>Their most recent album, "The Chaos Chapter: Freeze,"</strong>was released in May 2021.</p>
+    </div>
+</body>
+</html>

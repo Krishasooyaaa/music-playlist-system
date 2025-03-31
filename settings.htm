@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        .section {
+            margin-top: 20px;
+            padding: 15px;
+            background: #222;
+            border-radius: 8px;
+        }
+        .toggle {
+            float: right;
+            width: 40px;
+            height: 20px;
+            appearance: none;
+            background: #555;
+            border-radius: 20px;
+            position: relative;
+            outline: none;
+            cursor: pointer;
+        }
+        .toggle:checked {
+            background: #1DB954;
+        }
+        .toggle:before {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        .toggle:checked:before {
+            left: 22px;
+        }
+        select, button {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 8px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Settings</h1>
+
+        <div class="section">
+            <h2>Languages</h2>
+            <p>Select your preferred language:</p>
+            <select>
+                <option>English (English)</option>
+                <option>Hindi (हिन्दी)</option>
+                <option>Tamil (தமிழ்)</option>
+                <option>Spanish (Español)</option>
+                <option>French (Français)</option>
+            </select>
+        </div>
+
+        <div class="section">
+            <h2>Sound Quality</h2>
+            <p>Choose your audio streaming quality:</p>
+            <select>
+                <option>Low</option>
+                <option>Medium</option>
+                <option>High</option>
+                <option>Ultra HD</option>
+            </select>
+        </div>
+
+        <div class="section">
+            <h2>Autoplay</h2>
+            <p>Continue playing similar songs after your playlist ends</p>
+            <input type="checkbox" class="toggle" checked>
+        </div>
+    </div>
+</body>
+</html>

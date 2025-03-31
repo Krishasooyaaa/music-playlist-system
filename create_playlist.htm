@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Playlist</title>
+    <style>
+        body {
+            font-family: Georgia, serif;
+            background: url('static/images/playlist.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            padding-bottom: 80px; /* Space for now playing bar */
+        }
+        .container {
+            width: 90%;
+            margin: auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: black;
+        }
+        .create-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background:rgb(20, 31, 152);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .create-btn:hover {
+            background:rgba(45, 21, 132, 0.8);
+        }
+        .playlist {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(251, 248, 248, 0.55);
+            border-radius: 10px;
+        }
+        .playlist h3 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .playlist-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .edit-btn, .delete-btn {
+            background: none;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .edit-btn svg, .delete-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+        .edit-btn svg {
+            fill:rgba(31, 19, 134, 0.49);
+        }
+        .delete-btn svg {
+            fill: #ff4d4d;
+        }
+        .edit-btn:hover svg {
+            fill: rgba(31, 19, 134, 0.49);
+        }
+        .delete-btn:hover svg {
+            fill: #cc0000;
+        }
+        .song {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+        .song-content {
+            flex-grow: 1;
+            cursor: pointer;
+        }
+        .song-content:hover {
+            text-decoration: underline;
+        }
+        .delete-song-btn {
+            background: #ff4d4d;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .delete-song-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: white;
+        }
+        .delete-song-btn:hover {
+            background: #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create Playlist</h1>
+        <div class="form-group">
+            <label for="playlistName">Playlist Name</label>
+            <input type="text" id="playlistName" placeholder="Enter playlist name">
+        </div>
+        <button class="create-btn" onclick="createPlaylist()">Create Playlist</button>
+
+        <!-- Display Playlists and Songs -->
+        <div id="playlistsContainer"></div>
+    </div>
+
+    <script>
+        // Fetch and display playlists and songs
+        function fetchPlaylistsWithSongs() {
+            fetch('/get_playlists_with_songs')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch playlists');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const playlistsContainer = document.getElementById('playlistsContainer');
+                    playlistsContainer.innerHTML = '';
+
+                    if (data.length === 0) {
+                        playlistsContainer.innerHTML = '<p>No playlists found. Create one first!</p>';
+                    } else {
+                        data.forEach(playlist => {
+                            const playlistDiv = document.createElement('div');
+                            playlistDiv.className = 'playlist';
+                            playlistDiv.innerHTML = `
+                                <h3>
+                                    <span>${playlist.name.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
+                                    <div class="playlist-actions">
+                                        <button class="edit-btn" onclick="editPlaylistName(${playlist.id}, '${playlist.name.replace(/'/g, "\\'")}')">
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                                            </svg>
+                                        </button>
+                                        <button class="delete-btn" onclick="deletePlaylist(${playlist.id})">
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </h3>
+                                <div>
+                                    ${playlist.songs.length > 0 ? 
+                                        playlist.songs.map(song => `
+                                            <div class="song">
+                                                <div class="song-content" onclick="window.location.href='/play-song/${song.id}'">
+                                                    <strong>${song.title.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</strong><br>
+                                                    <small>${song.artist.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</small>
+                                                </div>
+                                                <button class="delete-song-btn" onclick="event.stopPropagation(); removeSongFromPlaylist(${playlist.id}, ${song.id})">
+                                                    <svg viewBox="0 0 24 24">
+                                                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        `).join('') 
+                                        : '<p>No songs in this playlist.</p>'
+                                    }
+                                </div>
+                            `;
+                            playlistsContainer.appendChild(playlistDiv);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching playlists:', error);
+                    alert('Failed to fetch playlists. Please try again.');
+                });
+        }
+
+        // Create a new playlist
+        function createPlaylist() {
+            const playlistName = document.getElementById('playlistName').value;
+
+            if (!playlistName) {
+                alert('Please enter a playlist name.');
+                return;
+            }
+
+            fetch('/create_playlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    playlist_name: playlistName,
+                    song_ids: []
+                }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to create playlist');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert('Playlist created successfully!');
+                    document.getElementById('playlistName').value = '';
+                    fetchPlaylistsWithSongs();
+                } else {
+                    alert('Failed to create playlist: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while creating the playlist.');
+            });
+        }
+
+        // Remove a song from a playlist
+        function removeSongFromPlaylist(playlistId, songId) {
+            if (!confirm('Are you sure you want to remove this song from the playlist?')) {
+                return;
+            }
+
+            fetch('/remove_song_from_playlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    playlist_id: playlistId,
+                    song_id: songId
+                }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to remove song from playlist');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert('Song removed from playlist successfully!');
+                    fetchPlaylistsWithSongs();
+                } else {
+                    alert('Failed to remove song: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while removing the song.');
+            });
+        }
+
+        // Edit playlist name
+        function editPlaylistName(playlistId, currentName) {
+            const newName = prompt('Enter the new playlist name:', currentName);
+            if (newName && newName.trim() !== '') {
+                fetch('/update_playlist_name', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        playlist_id: playlistId,
+                        new_name: newName
+                    }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to update playlist name');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert('Playlist name updated successfully!');
+                        fetchPlaylistsWithSongs();
+                    } else {
+                        alert('Failed to update playlist name: ' + (data.error || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while updating the playlist name.');
+                });
+            }
+        }
+
+        // Delete playlist
+        function deletePlaylist(playlistId) {
+            if (!confirm('Are you sure you want to delete this playlist?')) {
+                return;
+            }
+
+            fetch('/delete_playlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    playlist_id: playlistId
+                }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to delete playlist');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert('Playlist deleted successfully!');
+                    fetchPlaylistsWithSongs();
+                } else {
+                    alert('Failed to delete playlist: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while deleting the playlist.');
+            });
+        }
+
+        // Initial fetch
+        fetchPlaylistsWithSongs();
+    </script>
+</body>
+</html>

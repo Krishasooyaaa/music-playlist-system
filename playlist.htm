@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlists - Music Playlist System</title>
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+    <style>
+        body {
+            font-family: Georgia, serif;
+            background: url('static/images/playlist.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            padding-bottom: 80px; /* Space for now playing bar */
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background:rgba(255, 255, 255, 0.71);
+            padding: 15px 20px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .top-bar h2 {
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .top-bar .plus-btn {
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+        }
+
+        .back-btn {
+            font-size: 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: black;
+            margin-right: 10px;
+        }
+
+        .categories {
+            display: flex;
+            gap: 10px;
+            padding: 10px 20px;
+            margin-top: 60px;
+        }
+
+        .category {
+            background: rgba(255, 255, 255, 0.62);
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .category:hover {
+            background: rgba(58, 89, 155, 0.52) ;
+        }
+
+        h2 {
+            color: rgba(3, 22, 66, 0.9);
+            margin-bottom: 20px;
+        }
+
+        .playlist-container {
+            margin: 10px 20px;
+            display: none;
+        }
+
+        .playlist-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background:rgba(255, 255, 255, 0.41);
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .playlist-item:hover {
+            background: rgba(58, 89, 155, 0.83);
+        }
+
+        .playlist-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .playlist-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .playlist-info span {
+            font-size: 16px;
+        }
+
+        .playlist-info small {
+            font-size: 12px;
+            color: #bbb;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Bar with Back Button -->
+    <div class="top-bar">
+        <button class="back-btn" onclick="goBack()">&#8592;</button>
+        <h2>Library</h2>
+        <button class="plus-btn" onclick="createPlaylist()">+</button>
+    </div>
+
+    <!-- Categories -->
+    <div class="categories">
+        <div class="category" onclick="showSection('playlistList')">Playlists</div>
+        <div class="category" onclick="showSection('artistList')">Artists</div>
+    </div>
+
+    <!-- Playlists Section -->
+    <div class="playlist-container" id="playlistList">
+        <h3>Playlists</h3>
+
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('taylor_swift') }}'">
+            <img src="{{ url_for('static', filename='images/taylorswift.jpg') }}" alt="Taylor Swift">
+            <div class="playlist-info">
+                <span>Taylor Swift Songs</span>
+            </div>
+        </div>
+
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('ed_sheeran') }}'">
+            <img src="{{ url_for('static', filename='images/edsheeran.jpg') }}" alt="Ed Sheeran">
+            <div class="playlist-info">
+                <span>Ed Sheeran Songs</span>
+            </div>
+        </div>
+
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('charlie_puth') }}'">
+            <img src="{{ url_for('static', filename='images/charlieputh.jpg') }}" alt="Charlie Puth">
+            <div class="playlist-info">
+                <span>Charlie Puth Songs</span>
+            </div>
+        </div>
+
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('anirudh') }}'">
+            <img src="{{ url_for('static', filename='images/anirudh.jpg') }}" alt="Anirudh Ravichander">
+            <div class="playlist-info">
+                <span>Anirudh Ravichander Songs</span>
+            </div>
+        </div>
+
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('hiphop_tamizha') }}'">
+            <img src="{{ url_for('static', filename='images/hht.jpg') }}" alt="Hiphop Tamizha">
+            <div class="playlist-info">
+                <span>Hiphop Tamizha Songs</span>
+            </div>
+        </div>
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('sidsriram') }}'">
+            <img src="{{ url_for('static', filename='images/sidsriramsongs.jpg') }}" alt="Sid sriram">
+            <div class="playlist-info">
+                <span>sidsriram Songs</span>
+            </div>
+        </div>
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('shreyasongs') }}'">
+            <img src="{{ url_for('static', filename='images/shreyasongs.jpg') }}" alt="shreyasongs">
+            <div class="playlist-info">
+                <span>Shreya Ghosal Songs</span>
+            </div>
+        </div>
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('arrahmansongs') }}'">
+            <img src="{{ url_for('static', filename='images/arrcover.jpg') }}" alt="ARRAHMAN">
+            <div class="playlist-info">
+                <span>A R Rahman Songs</span>
+            </div>
+        </div>
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('arjithsongs') }}'">
+            <img src="{{ url_for('static', filename='images/arjithsongs.jpg') }}" alt="Arjith Singh">
+            <div class="playlist-info">
+                <span>Arjith Singh Songs</span>
+            </div>
+        </div>
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('jbsongs') }}'">
+            <img src="{{ url_for('static', filename='images/jb_loveme.jpg') }}" alt="Justin Bieber">
+            <div class="playlist-info">
+                <span>Justin Beiber Songs</span>
+            </div>
+        </div>
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('kpopsongs') }}'">
+            <img src="{{ url_for('static', filename='images/kpop.jpg') }}" alt="kpop">
+            <div class="playlist-info">
+                <span>Kpop Songs</span>
+            </div>
+        </div>
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('sonusongs') }}'">
+            <img src="{{ url_for('static', filename='images/sonucover.jpg') }}" alt="sonu">
+            <div class="playlist-info">
+                <span>Sonu Nigam Songs</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Artists Section -->
+    <div class="playlist-container" id="artistList">
+        <h3>About the Artists</h3>
+
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('about_taylor') }}'">
+            <img src="{{ url_for('static', filename='images/taylorswift.jpg') }}" alt="Taylor Swift">
+            <div class="playlist-info">
+                <span>Taylor Swift</span>
+            </div>
+        </div>
+
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('about_edsheeran') }}'">
+            <img src="{{ url_for('static', filename='images/edsheeran.jpg') }}" alt="Ed Sheeran">
+            <div class="playlist-info">
+                <span>Ed Sheeran</span>
+            </div>
+        </div>
+
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('about_charlie') }}'">
+            <img src="{{ url_for('static', filename='images/charlieputh.jpg') }}" alt="Charlie Puth">
+            <div class="playlist-info">
+                <span>Charlie Puth</span>
+            </div>
+        </div>
+
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('about_anirudh') }}'">
+            <img src="{{ url_for('static', filename='images/anirudh.jpg') }}" alt="Anirudh Ravichander">
+            <div class="playlist-info">
+                <span>Anirudh Ravichander</span>
+            </div>
+        </div>
+
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('about_hiphop') }}'">
+            <img src="{{ url_for('static', filename='images/hht.jpg') }}" alt="Hiphop Tamizha">
+            <div class="playlist-info">
+                <span>Hiphop Tamizha</span>
+            </div>
+        </div>
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('about_sidsriram') }}'">
+            <img src="{{ url_for('static', filename='images/sidsriramsongs.jpg') }}" alt="Sid sriram">
+            <div class="playlist-info">
+                <span>sidsriram</span>
+            </div>
+        </div>
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('about_shreya') }}'">
+            <img src="{{ url_for('static', filename='images/shreyasongs.jpg') }}" alt="shreyasongs">
+            <div class="playlist-info">
+                <span>Shreya Ghosal</span>
+            </div>
+        </div>
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('about_arrahman') }}'">
+            <img src="{{ url_for('static', filename='images/arrcover.jpg') }}" alt="ARRAHMAN">
+            <div class="playlist-info">
+                <span>A R Rahman</span>
+            </div>
+        </div>
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('about_arjith') }}'">
+            <img src="{{ url_for('static', filename='images/arjithsongs.jpg') }}" alt="Arjith Singh">
+            <div class="playlist-info">
+                <span>Arjith Singh</span>
+            </div>
+        </div>
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('about_justin') }}'">
+            <img src="{{ url_for('static', filename='images/jb_loveme.jpg') }}" alt="Justin Bieber">
+            <div class="playlist-info">
+                <span>Justin Beiber</span>
+            </div>
+        </div>
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('about_bts') }}'">
+            <img src="{{ url_for('static', filename='images/btssongs.jpg') }}" alt="bts">
+            <div class="playlist-info">
+                <span>BTS</span>
+            </div>
+        </div>
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('about_bp') }}'">
+            <img src="{{ url_for('static', filename='images/bp_hylt.jpg') }}" alt="Blackpink">
+            <div class="playlist-info">
+                <span>Blackpink</span>
+            </div>
+        </div>
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('about_txt') }}'">
+            <img src="{{ url_for('static', filename='images/txt_dejavu.jpg') }}" alt="txt">
+            <div class="playlist-info">
+                <span>Tomorrow X together</span>
+            </div>
+        </div>
+        <div class="playlist-item" onclick="window.location.href='{{ url_for('about_sonu') }}'">
+            <img src="{{ url_for('static', filename='images/sonucover.jpg') }}" alt="sonu">
+            <div class="playlist-info">
+                <span>Sonu Nigam</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function goBack() {
+            window.location.href = "/";
+        }
+
+        function showSection(sectionId) {
+            document.getElementById("playlistList").style.display = "none";
+            document.getElementById("artistList").style.display = "none";
+            document.getElementById(sectionId).style.display = "block";
+        }
+
+        function createPlaylist() {
+            window.location.href = "{{ url_for('create_playlist') }}";
+        }
+
+        window.onload = function() {
+            document.getElementById("playlistList").style.display = "block";
+            document.getElementById("artistList").style.display = "none";
+        };
+    </script>
+
+</body>
+</html>

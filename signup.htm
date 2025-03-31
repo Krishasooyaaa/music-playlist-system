@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - BluHarmony</title>
+    <style>
+        body {
+            font-family: Georgia, serif;
+            background: url('/static/images/login.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: rgba(3, 22, 66, 0.9);
+            margin-bottom: 20px;
+        }
+
+        .container {
+            background: rgba(3, 22, 66, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(48, 48, 98, 0.84);
+            text-align: center;
+            width: 350px;
+            color: white;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .input-box {
+            position: relative;
+            width: 100%;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background: rgb(255, 255, 255);
+            color: black;
+        }
+
+        .eye-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color:rgb(100, 157, 195);
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #364a67;
+        }
+
+        p {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        a {
+            color: rgb(176, 158, 84);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>BluHarmony</h1>  <!-- BluHarmony now outside the box -->
+
+    <div class="container">
+        <h2>Create an Account</h2>
+        <input type="text" id="new-username" placeholder="Choose a Username">
+        
+        <div class="input-box">
+            <input type="password" id="new-password" placeholder="Choose a Password">
+            <span class="eye-icon" onclick="togglePassword('new-password', this)">👁️</span>
+        </div>
+        
+        <button onclick="createAccount()">Sign Up</button>
+        <p>Already have an account? <a href="/login">Login here</a></p>
+        <p id="signup-message"></p>
+    </div>
+
+    <script>
+        function togglePassword(id, icon) {
+            var passwordInput = document.getElementById(id);
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                icon.textContent = "🙈"; // Change icon to "Hide"
+            } else {
+                passwordInput.type = "password";
+                icon.textContent = "👁️"; // Change icon to "Show"
+            }
+        }
+
+        async function createAccount() {
+            const newUsername = document.getElementById("new-username").value.trim();
+            const newPassword = document.getElementById("new-password").value.trim();
+            const signupMessage = document.getElementById("signup-message");
+
+            if (newUsername && newPassword) {
+                try {
+                    const response = await fetch('/signup', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username: newUsername, password: newPassword })
+                    });
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        signupMessage.className = "success";
+                        signupMessage.textContent = "✅ Account created successfully! Redirecting to login...";
+                        setTimeout(() => {
+                            window.location.href = "/login";
+                        }, 2000);
+                    } else {
+                        signupMessage.className = "error";
+                        signupMessage.textContent = `⚠️ ${result.error || result.message}`;
+                    }
+                } catch (error) {
+                    signupMessage.className = "error";
+                    signupMessage.textContent = "⚠️ Error: Failed to connect to the server.";
+                }
+            } else {
+                signupMessage.className = "error";
+                signupMessage.textContent = "⚠️ Fill all fields!";
+            }
+        }
+    </script>
+
+</body>
+</html>

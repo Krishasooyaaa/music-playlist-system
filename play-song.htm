@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Now Playing - {{ song_title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #121212, #628cb6);
+            background-size: cover;
+            background-attachment: fixed; /* Keeps background fixed while scrolling */
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh; /* Ensures it covers the full viewport height */
+            margin: 0;
+            padding: 0;
+            color: white;
+        }
+        
+        .player-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+        audio {
+            width: 100%;
+            margin-top: 1rem;
+        }
+        .song-info {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="player-container">
+        <div class="song-info">
+            <h1>{{ song_title }}</h1>
+            <h3>{{ artist }}</h3>
+        </div>
+        <audio controls autoplay>
+            <source src="{{ file_path }}" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <div style="margin-top: 1rem;">
+            <a href="{{ url_for('playlist') }}" style="color:rgb(94, 120, 182); text-decoration: none;">
+                ← Back to Playlists
+            </a>
+        </div>
+    </div>
+</body>
+</html>

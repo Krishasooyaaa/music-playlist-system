@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BluHarmony - Music Playlist System</title>
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+    <style>
+        body {
+            font-family: Georgia, serif;
+            background: url('static/images/music.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            padding-bottom: 80px; /* Space for now playing bar */
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgb(255, 255, 255);
+            padding: 15px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            gap: 20px;
+        }
+
+        .top-bar-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .website-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: rgba(3, 22, 66, 0.9);
+        }
+
+        .menu-icon {
+            font-size: 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: black;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1100;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            background: rgba(13, 52, 142, 0.85);
+            border-radius: 30px;
+            padding: 8px 15px;
+            width: 70%;
+            max-width: 600px;
+            position: relative;
+        }
+        
+        .search-container input {
+            flex: 1;
+            padding: 12px 50px;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.86);
+            color: black;
+            outline: none;
+            width: 100%;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgb(25, 38, 97);
+            border-radius: 0 0 10px 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1001;
+            display: none;
+        }
+
+        .search-result-item {
+            padding: 10px 15px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-result-item:hover {
+            background: rgba(91, 117, 178, 0.61);
+        }
+
+        .search-result-img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .song-info {
+            flex: 1;
+        }
+
+        .song-title {
+            font-weight: bold;
+        }
+
+        .song-artist {
+            font-size: 0.8em;
+            color: #aaa;
+        }
+        
+
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: -250px;
+            background: rgba(255, 255, 255, 0.94);
+            padding-top: 60px;
+            transition: 0.3s ease-in-out;
+            z-index: 1100;
+        }
+        
+
+        .sidebar a {
+            padding: 12px 20px;
+            text-decoration: none;
+            font-size: 20px;
+            color: black;
+            display: block;
+        }
+
+        .sidebar a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 30px;
+            color: black;
+            cursor: pointer;
+        }
+
+        .playlist-container {
+            background: rgba(47, 79, 131, 0.9);
+            width: 80%;
+            margin: 120px auto 20px;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .playlist-header {
+            font-size: 24px;
+            color: black;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .playlist-box {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+
+        .playlist-card {
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: black;
+            cursor: pointer;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .playlist-card:hover {
+            background: rgba(255, 255, 255, 0.73);
+        }
+
+        .playlist-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .playlist-name {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 5px;
+            font-size: 14px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background: rgb(255, 255, 255);
+        }
+
+        .add-playlist {
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .dev-section {
+            margin-top: 30px;
+            text-align: left;
+        }
+        .dev-title {
+            font-size: 20px;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .dev-playlist-box {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .now-playing {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgb(3, 22, 66);
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .now-playing-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 15px;
+        }
+
+        .now-playing-info {
+            flex: 1;
+            color: white;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-controls button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .close-player {
+            margin-left: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <button class="menu-icon" onclick="toggleSidebar()">☰</button>
+
+    <div class="top-bar">
+        <div class="top-bar-content">
+            <span class="website-title">BluHarmony</span>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="What do you want to play?">
+                <div class="search-results" id="searchResults"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <span class="close-btn" onclick="toggleSidebar()">&times;</span>
+        <a href="/">Home</a>
+        <a href="/playlist">Library</a>
+        <a href="/createplaylist">Your Playlists</a>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <div class="playlist-container">
+        <div class="playlist-header">Your Playlist</div>
+        <div class="playlist-box" id="userPlaylist">
+            <div class="playlist-card" onclick="location.href='/create-playlist'">
+                <div class="add-playlist">+</div>
+                <div class="playlist-name">Add Playlist</div>
+            </div>
+        </div>
+
+        <div class="dev-section">
+            <div class="dev-title">Pick from Genres</div>
+            <div class="dev-playlist-box">
+                <div class="playlist-card" onclick="location.href='/happy'">
+                    <img src="static/images/happy.jpg" class="playlist-image" alt="Happy">
+                    <div class="playlist-name">Happy</div>
+                </div>
+                <div class="playlist-card" onclick="location.href='/broken'">
+                    <img src="static/images/broken.jpg" class="playlist-image" alt="Broken">
+                    <div class="playlist-name">Broken</div>
+                </div>
+                <div class="playlist-card" onclick="location.href='/vibey'">
+                    <img src="static/images/vibey.jpg" class="playlist-image" alt="Vibey">
+                    <div class="playlist-name">Vibey</div>
+                </div>
+                <div class="playlist-card" onclick="location.href='/romantic'">
+                    <img src="static/images/romantic.jpg" class="playlist-image" alt="Romantic">
+                    <div class="playlist-name">Romantic</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dev-section">
+            <div class="dev-title">Pick from Artists</div>
+            <div class="dev-playlist-box">
+                <div class="playlist-card" onclick="location.href='/taylor-swift'">
+                    <img src="static/images/taylorswift.jpg" class="playlist-image" alt="Taylor Swift">
+                    <div class="playlist-name">Taylor Swift</div>
+                </div>
+                <div class="playlist-card" onclick="location.href='/ed-sheeran'">
+                    <img src="static/images/edsheeran.jpg" class="playlist-image" alt="Ed Sheeran">
+                    <div class="playlist-name">Ed Sheeran</div>
+                </div>
+                <div class="playlist-card" onclick="location.href='/charlie-puth'">
+                    <img src="static/images/charlieputh.jpg" class="playlist-image" alt="Charlie Puth">
+                    <div class="playlist-name">Charlie Puth</div>
+                </div>
+                <div class="playlist-card" onclick="location.href='/anirudh'">
+                    <img src="static/images/anirudh.jpg" class="playlist-image" alt="Anirudh Ravichandran">
+                    <div class="playlist-name">Anirudh Ravichandran</div>
+                </div>
+                <div class="playlist-card" onclick="location.href='/hiphop-tamizha'">
+                    <img src="static/images/hht.jpg" class="playlist-image" alt="Hip-Hop Tamizha">
+                    <div class="playlist-name">Hip-Hop Tamizha</div>
+                </div>
+                <div class="playlist-card" onclick="location.href='/sidsriram'">
+                    <img src="static/images/sidsriramsongs.jpg" class="playlist-image" alt="Sid Sriram">
+                    <div class="playlist-name">Sid Sriram</div>
+                </div>
+                <div class="playlist-card" onclick="location.href='/shreyasongs'">
+                    <img src="static/images/shreyasongs.jpg" class="playlist-image" alt="shreya songs">
+                    <div class="playlist-name">Shreya</div>
+                </div>
+                <div class="playlist-card" onclick="location.href='/arrahmansongs'">
+                    <img src="static/images/arrcover.jpg" class="playlist-image" alt="arrahman songs">
+                    <div class="playlist-name">A R Rahman</div>
+                </div>
+                <div class="playlist-card" onclick="location.href='/arjithsongs'">
+                    <img src="static/images/arjithcover.jpg" class="playlist-image" alt="arjith songs">
+                    <div class="playlist-name">Arijit Singh</div>
+                </div>
+                <div class="playlist-card" onclick="location.href='/jbsongs'">
+                    <img src="static/images/jb_loveme.jpg" class="playlist-image" alt="jb songs">
+                    <div class="playlist-name">Justin Beiber</div>
+                </div>
+                <div class="playlist-card" onclick="location.href='/kpopsongs'">
+                    <img src="static/images/kpop.jpg" class="playlist-image" alt="kpop songs">
+                    <div class="playlist-name">kpop</div>
+                </div>
+                <div class="playlist-card" onclick="location.href='/sonusongs'">
+                    <img src="static/images/sonucover.jpg" class="playlist-image" alt="sonu songs">
+                    <div class="playlist-name">Sonu Nigam</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dev-section">
+            <div class="dev-title">Pick from Languages</div>
+            <div class="dev-playlist-box">
+                <div class="playlist-card" onclick="location.href='/english'">
+                    <img src="static/images/english.jpg" class="playlist-image" alt="English">
+                    <div class="playlist-name">English</div>
+                </div>
+                <div class="playlist-card" onclick="location.href='/hindi'">
+                    <img src="static/images/hindi.jpg" class="playlist-image" alt="Hindi">
+                    <div class="playlist-name">Hindi</div>
+                </div>
+                <div class="playlist-card" onclick="location.href='tamil'">
+                    <img src="static/images/tamil.jpg" class="playlist-image" alt="Tamil">
+                    <div class="playlist-name">Tamil</div>
+                </div>
+                <div class="playlist-card" onclick="location.href='/telugu'">
+                    <img src="static/images/telugu.jpg" class="playlist-image" alt="Telugu">
+                    <div class="playlist-name">Telugu</div>
+                </div>
+                <div class="playlist-card" onclick="location.href='/kpopsongs'">
+                    <img src="static/images/korean.jpg" class="playlist-image" alt="Korean">
+                    <div class="playlist-name">Korean</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="now-playing" id="nowPlaying" style="display: none;">
+        <audio id="audioPlayer"></audio>
+        <img id="nowPlayingImg" class="now-playing-img" src="" alt="Now playing">
+        <div class="now-playing-info">
+            <div id="nowPlayingTitle">No song playing</div>
+            <div id="nowPlayingArtist"></div>
+        </div>
+        <div class="player-controls">
+            <button id="prevBtn">⏮</button>
+            <button id="playPauseBtn">▶</button>
+            <button id="nextBtn">⏭</button>
+        </div>
+        <button class="close-player" id="closePlayerBtn">✕</button>
+    </div>
+
+    <script>
+        
+        const songs = [
+            {id: 1, title: 'Love Story', artist: 'Taylor Swift', file_path: 'static/mp3/lovestory_ts.mp3', image_path: 'static/images/tslovestory.jpg'},
+            {id: 2, title: 'Shake It Off', artist: 'Taylor Swift', file_path: 'static/mp3/shakeitoff_ts.mp3', image_path: 'static/images/shakeitoff_ts.jpg'},
+            {id: 3, title: 'Blank Space', artist: 'Taylor Swift', file_path: 'static/mp3/blankspace_ts.mp3', image_path: 'static/images/blankspace.jpeg'},
+            {id: 4, title: 'Enchanted', artist: 'Taylor Swift', file_path: 'static/mp3/enchanted_ts.mp3', image_path: 'static/images/enchanted_ts.jpg'},
+            {id: 5, title: 'Perfect', artist: 'Ed Sheeran', file_path: 'static/mp3/perfect_es.mp3', image_path: 'static/images/shapeofu_es.jpg'},
+            {id: 6, title: 'Shape of You', artist: 'Ed Sheeran', file_path: 'static/mp3/shapeofu_es.mp3', image_path: 'static/images/shapeofu_es.jpg'},
+            {id: 7, title: 'Happier', artist: 'Ed Sheeran', file_path: 'static/mp3/happier_es.mp3', image_path: 'static/images/happier_es.jpg'},
+            {id: 8, title: 'Bae', artist: 'Anirudh Ravichandran', file_path: 'static/mp3/bae.mp3', image_path: 'static/images/bae.jpg'},
+            {id: 9, title: 'Chuttumale', artist: 'Anirudh Ravichandran', file_path: 'static/mp3/chuttumale.mp3', image_path: 'static/images/chuttumale.jpg'},
+            {id: 10, title: 'Manasilayo', artist: 'Anirudh Ravichandran', file_path: 'static/mp3/manasilayoo.mp3', image_path: 'static/images/manasilayo.jpg'},
+            {id: 11, title: 'Yennai Mattrum Kaadhale', artist: 'Anirudh Ravichander', file_path: 'static/mp3/yennaimk.mp3', image_path: 'static/images/yennaimk.jpg'},
+            {id: 16, title: 'We Dont Talk Anymore (feat. Selena Gomez)', artist: 'Charlie Puth', file_path: 'static/mp3/wdta_cp.mp3', image_path: 'static/images/wdta_cp.jpg'},
+            {id: 17, title: 'Attention', artist: 'Charlie Puth', file_path: 'static/mp3/attention_cp.mp3', image_path: 'static/images/attention_cp.jpg'},
+            {id: 18, title: 'Light Switch', artist: 'Charlie Puth', file_path: 'static/mp3/lightswitch_cp.mp3', image_path: 'static/images/lightswitch_cp.jpg'},
+            {id: 19, title: 'Left and Right (feat. Jungkook of BTS)', artist: 'Charlie Puth', file_path: 'static/mp3/lar_cp.mp3', image_path: 'static/images/lndr_cp.jpg'},
+            {id: 20, title: 'Kannala Kannala', artist: 'Hip-Hop Tamizha', file_path: 'static/mp3/kannalak.mp3', image_path: 'static/images/kannalak.jpg'},
+            {id: 21, title: 'Vaadi Pulla Vaadi', artist: 'Hip-Hop Tamizha', file_path: 'static/mp3/vaadipullav.mp3', image_path: 'static/images/vaadipullav.jpg'},
+            {id: 22, title: 'Achacho', artist: 'Hip-Hop Tamizha', file_path: 'static/mp3/achacho.mp3', image_path: 'static/images/achacho.jpg'},
+            {id: 23, title: 'Aye Aye Aye', artist: 'Hip-Hop Tamizha', file_path: 'static/mp3/ayeayeaye.mp3', image_path: 'static/images/ayeayeaye.jpg'},
+            {id: 24, title: 'Emai Poyave', artist: 'Sid Sriram', file_path: 'static/mp3/ss_emaipoya.mp3', image_path: 'static/images/ss_emaipoya.jpg'},
+            {id: 25, title: 'Ennodu Nee Irundhal', artist: 'Sid Sriram', file_path: 'static/mp3/ss_enodunee.mp3', image_path: 'static/images/ss_enodunee.jpg'},
+            {id: 26, title: 'Kadhaippoma', artist: 'Sid Sriram', file_path: 'static/mp3/ss_kadhaipoma.mp3', image_path: 'static/images/ss_kadhaipoma.jpg'},
+            {id: 27, title: 'Macho', artist: 'Sid Sriram', file_path: 'static/mp3/ss_macho.mp3', image_path: 'static/images/ss_macho.jpg'},
+            {id: 28, title: 'Maate Vinadhuga', artist: 'Sid Sriram', file_path: 'static/mp3/ss_matevina.mp3', image_path: 'static/images/ss_matevina.jpg'},
+            {id: 29, title: 'Mei Nigara', artist: 'Sid Sriram', file_path: 'static/mp3/ss_meinig.mp3', image_path: 'static/images/ss_meinig.jpg'},
+            {id: 30, title: 'Mudhal Nee Mudivum Nee', artist: 'Sid Sriram', file_path: 'static/mp3/ss_mnmn.mp3', image_path: 'static/images/ss_mnmn.jpg'},
+            {id: 31, title: 'Nee Singam Dhan', artist: 'Sid Sriram', file_path: 'static/mp3/ss_neesingam.mp3', image_path: 'static/images/ss_neesingam.jpg'},
+            {id: 32, title: 'Thallipogathey', artist: 'Sid Sriram', file_path: 'static/mp3/ss_thalipogathey.mp3', image_path: 'static/images/ss_thalipogathey.jpg'},
+            {id: 33, title: 'Tharame Tharame', artist: 'Sid Sriram', file_path: 'static/mp3/ss_tharame.mp3', image_path: 'static/images/ss_tharame.jpg'},
+            {id: 34, title: 'Sunn Raha Hai', artist: 'Shreya Ghoshal', file_path: 'static/mp3/sg_sunnraha.mp3', image_path: 'static/images/sg_sunnraha.jpg'},
+            {id: 35, title: 'Main Agar Kahoon', artist: 'Shreya Ghoshal', file_path: 'static/mp3/sg_mainagar.mp3', image_path: 'static/images/sg_mainagar.jpg'},
+            {id: 36, title: 'Mannippaya', artist: 'Shreya Ghoshal', file_path: 'static/mp3/sg_manipaya.mp3', image_path: 'static/images/sg_manipaya.jpg'},
+            {id: 37, title: 'Munbe Vaa', artist: 'Shreya Ghoshal', file_path: 'static/mp3/sg_munbeva.mp3', image_path: 'static/images/sg_munbeva.jpg'},
+            {id: 38, title: 'Nannare', artist: 'Shreya Ghoshal', file_path: 'static/mp3/sg_nanare.mp3', image_path: 'static/images/sg_nanare.jpg'},
+            {id: 39, title: 'Neethanae', artist: 'Shreya Ghoshal', file_path: 'static/mp3/sg_neethane.mp3', image_path: 'static/images/sg_neethane.jpg'},
+            {id: 40, title: 'Samajavaragamana - Female ver.', artist: 'Shreya Ghoshal', file_path: 'static/mp3/sg_samaja.mp3', image_path: 'static/images/sg_samaja.jpg'},
+            {id: 41, title: 'Sunlo Zara', artist: 'Shreya Ghoshal', file_path: 'static/mp3/sg_sunloza.mp3', image_path: 'static/images/sg_sunloza.jpg'},
+            {id: 42, title: 'Teri Meri', artist: 'Shreya Ghoshal', file_path: 'static/mp3/sg_terimeri.mp3', image_path: 'static/images/sg_terimeri.jpg'},
+            {id: 43, title: 'Then Then Then', artist: 'Shreya Ghoshal', file_path: 'static/mp3/sg_thenthen.mp3', image_path: 'static/images/sg_thenthen.jpg'},
+            {id: 44, title: 'Andha Arabic Kadaloram', artist: 'AR Rahman', file_path: 'static/mp3/arr_arabic.mp3', image_path: 'static/images/arr_arabic.jpg'},
+            {id: 45, title: 'Hosanna', artist: 'AR Rahman', file_path: 'static/mp3/arr_hosana.mp3', image_path: 'static/images/arr_hosana.jpg'},
+            {id: 46, title: 'Marudhani', artist: 'AR Rahman', file_path: 'static/mp3/arr_marudani.mp3', image_path: 'static/images/arr_marudani.jpg'},
+            {id: 47, title: 'Mental Manadhil', artist: 'AR Rahman', file_path: 'static/mp3/arr_mental.mp3', image_path: 'static/images/arr_mental.jpg'},
+            {id: 48, title: 'Newyork Nagaram', artist: 'AR Rahman', file_path: 'static/mp3/arr_newyork.mp3', image_path: 'static/images/arr_newyork.jpg'},
+            {id: 49, title: 'Raajhanaa', artist: 'AR Rahman', file_path: 'static/mp3/arr_rajhana.mp3', image_path: 'static/images/arr_rajhana.jpg'},
+            {id: 50, title: 'Tere Bina', artist: 'AR Rahman', file_path: 'static/mp3/arr_terebina.mp3', image_path: 'static/images/arr_terebina.jpg'},
+            {id: 51, title: 'Usure Pogudhey', artist: 'AR Rahman', file_path: 'static/mp3/arr_usurepog.mp3', image_path: 'static/images/arr_usurepog.jpg'},
+            {id: 52, title: 'Yakkai Thiri', artist: 'AR Rahman', file_path: 'static/mp3/arr_yakaithi.mp3', image_path: 'static/images/arr_yakaithi.jpg'},
+            {id: 53, title: 'Yennai Izhukkuthadi', artist: 'AR Rahman', file_path: 'static/mp3/arr_yenaizhu.mp3', image_path: 'static/images/arr_yenaizhu.jpg'},
+            {id: 64, title: 'Agar Tum Sath Ho', artist: 'Arijit Singh', file_path: 'static/mp3/as_agartum.mp3', image_path: 'static/images/as_agartum.jpg'},
+            {id: 65, title: 'Apna Bana Le', artist: 'Arijit Singh', file_path: 'static/mp3/as_apnabana.mp3', image_path: 'static/images/as_apnabana.jpg'},
+            {id: 66, title: 'Channa Mereya', artist: 'Arijit Singh', file_path: 'static/mp3/as_chanameriya.mp3', image_path: 'static/images/as_chanameriya.jpg'},
+            {id: 67, title: 'Deva Deva', artist: 'Arijit Singh', file_path: 'static/mp3/as_deva.mp3', image_path: 'static/images/as_deva.jpg'},
+            {id: 68, title: 'Gerua', artist: 'Arijit Singh', file_path: 'static/mp3/as_gerua.mp3', image_path: 'static/images/as_gerua.jpg'},
+            {id: 69, title: 'Naan Un', artist: 'Arijit Singh', file_path: 'static/mp3/as_naanun.mp3', image_path: 'static/images/as_naanun.jpg'},
+            {id: 70, title: 'Pal', artist: 'Arijit Singh', file_path: 'static/mp3/as_pal.mp3', image_path: 'static/images/as_pal.jpg'},
+            {id: 71, title: 'Sajini', artist: 'Arijit Singh', file_path: 'static/mp3/as_sajini.mp3', image_path: 'static/images/as_sajini.jpg'},
+            {id: 72, title: 'Tum Hi Ho', artist: 'Arijit Singh', file_path: 'static/mp3/as_tumhiho.mp3', image_path: 'static/images/as_tumhiho.jpg'},
+            {id: 73, title: 'Zaalima', artist: 'Arijit Singh', file_path: 'static/mp3/as_zalima.mp3', image_path: 'static/images/as_zalima.jpg'},
+            {id: 74, title: 'Dynamite', artist: 'BTS', file_path: 'static/mp3/bts_dynamite.mp3', image_path: 'static/images/bts_dynamite.jpg'},
+            {id: 75, title: 'Fake Love', artist: 'BTS', file_path: 'static/mp3/bts_fakelove.mp3', image_path: 'static/images/bts_fakelove.jpg'},
+            {id: 76, title: 'I Need U', artist: 'BTS', file_path: 'static/mp3/bts_ineedu.mp3', image_path: 'static/images/bts_ineedu.jpg'},
+            {id: 77, title: 'Life Goes On', artist: 'BTS', file_path: 'static/mp3/bts_lifegoeson.mp3', image_path: 'static/images/bts_lifegoeson.jpg'},
+            {id: 78, title: 'As If Its Your Last', artist: 'Blackpink', file_path: 'static/mp3/bp_aity.mp3', image_path: 'static/images/bp_aity.jpg'},
+            {id: 79, title: 'APT.', artist: 'Blackpink, ROSE, Bruno Mars', file_path: 'static/mp3/bp_apt.mp3', image_path: 'static/images/bp_apt.jpg'},
+            {id: 80, title: 'Ddu-du Ddu-du', artist: 'Blackpink', file_path: 'static/mp3/bp_ddudu.mp3', image_path: 'static/images/bp_ddudu.jpg'},
+            {id: 81, title: 'How You Like That', artist: 'Blackpink', file_path: 'static/mp3/bp_hylt.mp3', image_path: 'static/images/bp_hylt.jpg'},
+            {id: 82, title: 'Deja Vu', artist: 'Tomorrow X Together', file_path: 'static/mp3/txt_dejavu.mp3', image_path: 'static/images/txt_dejavu.jpg'},
+            {id: 83, title: 'Loser=Lover', artist: 'Tomorrow X Together', file_path: 'static/mp3/txt_loser.mp3', image_path: 'static/images/txt_loser.jpg'},
+            {id: 84, title: 'Baby', artist: 'Justin Bieber', file_path: 'static/mp3/jb_baby.mp3', image_path: 'static/images/jb_baby.jpg'},
+            {id: 85, title: 'Eenie Meenie', artist: 'Justin Bieber', file_path: 'static/mp3/jb_eenie.mp3', image_path: 'static/images/jb_eenie.jpg'},
+            {id: 86, title: 'Favorite Girl', artist: 'Justin Bieber', file_path: 'static/mp3/jb_favgirl.mp3', image_path: 'static/images/jb_favgirl.jpg'},
+            {id: 87, title: 'Ghost', artist: 'Justin Bieber', file_path: 'static/mp3/jb_ghost.mp3', image_path: 'static/images/jb_ghost.jpg'},
+            {id: 88, title: 'Let Me Love You', artist: 'Justin Bieber', file_path: 'static/mp3/jb_letmeluvu.mp3', image_path: 'static/images/jb_letmeluvu.jpg'},
+            {id: 89, title: 'One Less Lonely Girl', artist: 'Justin Bieber', file_path: 'static/mp3/jb_oneless.mp3', image_path: 'static/images/jb_oneless.jpg'},
+            {id: 90, title: 'STAY', artist: 'Justin Bieber', file_path: 'static/mp3/jb_stay.mp3', image_path: 'static/images/jb_stay.jpg'},
+            {id: 91, title: 'Love Yourself', artist: 'Justin Bieber', file_path: 'static/mp3/jb_loveyours.mp3', image_path: 'static/images/jb_loveyours.jpg'},
+            {id: 92, title: 'Yummy', artist: 'Justin Bieber', file_path: 'static/mp3/jb_yummy.mp3', image_path: 'static/images/jb_yummy.jpg'},
+            {id: 93, title: 'Love Me', artist: 'Justin Bieber', file_path: 'static/mp3/jb_loveme.mp3', image_path: 'static/images/jb_loveme.jpg'},
+            {id: 94, title: 'Abhi Mujh Mein Kahin', artist: 'Sonu Nigam', file_path: 'static/mp3/sn_abhimujh.mp3', image_path: 'static/images/sn_abhimujh.jpg'},
+            {id: 95, title: 'Chak De', artist: 'Sonu Nigam', file_path: 'static/mp3/sn_chakde.mp3', image_path: 'static/images/sn_chakde.jpg'},
+            {id: 96, title: 'Do Pal', artist: 'Sonu Nigam', file_path: 'static/mp3/sn_dopal.mp3', image_path: 'static/images/sn_dopal.jpg'},
+            {id: 97, title: 'Ishq Hua', artist: 'Sonu Nigam', file_path: 'static/mp3/sn_ishqhua.mp3', image_path: 'static/images/sn_ishqhua.jpg'},
+            {id: 98, title: 'Maahi Ve', artist: 'Sonu Nigam', file_path: 'static/mp3/sn_mahive.mp3', image_path: 'static/images/sn_mahive.jpg'},
+            {id: 99, title: 'Main Hoon Na', artist: 'Sonu Nigam', file_path: 'static/mp3/sn_mainhoona.mp3', image_path: 'static/images/sn_mainhoona.jpg'},
+            {id: 100, title: 'Saathiya', artist: 'Sonu Nigam', file_path: 'static/mp3/sn_sathiya.mp3', image_path: 'static/images/sn_sathiya.jpg'},
+            {id: 101, title: 'Sun Zara', artist: 'Sonu Nigam', file_path: 'static/mp3/sn_sunzara.mp3', image_path: 'static/images/sn_sunzara.jpg'},
+            {id: 102, title: 'Tere Bin', artist: 'Sonu Nigam', file_path: 'static/mp3/sn_terebin.mp3', image_path: 'static/images/sn_terebin.jpg'},
+            {id: 103, title: 'Tum Dekho Naa', artist: 'Sonu Nigam', file_path: 'static/mp3/sn_tumhidekh.mp3', image_path: 'static/images/sn_tumhidekh.jpg'}
+                    ];
+
+        // DOM elements
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const nowPlaying = document.getElementById('nowPlaying');
+        const nowPlayingImg = document.getElementById('nowPlayingImg');
+        const nowPlayingTitle = document.getElementById('nowPlayingTitle');
+        const nowPlayingArtist = document.getElementById('nowPlayingArtist');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const closePlayerBtn = document.getElementById('closePlayerBtn');
+
+        // Current playing song index
+        let currentSongIndex = -1;
+        let searchResultSongs = [];
+
+        // Search functionality
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            if (query.length < 2) {
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            searchResultSongs = songs.filter(song => 
+                song.title.toLowerCase().includes(query) || 
+                song.artist.toLowerCase().includes(query)
+            );
+
+            displaySearchResults(searchResultSongs);
+        });
+
+        function displaySearchResults(results) {
+            searchResults.innerHTML = '';
+            
+            if (results.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.className = 'search-result-item';
+                noResults.textContent = 'No results found';
+                searchResults.appendChild(noResults);
+            } else {
+                results.forEach((song, index) => {
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'search-result-item';
+                    resultItem.innerHTML = `
+                        <img src="${song.image_path}" class="search-result-img" alt="${song.title}">
+                        <div class="song-info">
+                            <div class="song-title">${song.title}</div>
+                            <div class="song-artist">${song.artist}</div>
+                        </div>
+                    `;
+                    resultItem.addEventListener('click', () => playSong(index));
+                    searchResults.appendChild(resultItem);
+                });
+            }
+            
+            searchResults.style.display = results.length ? 'block' : 'none';
+        }
+
+        // Play song functionality
+        function playSong(index) {
+            currentSongIndex = index;
+            const song = searchResultSongs[currentSongIndex];
+            
+            audioPlayer.src = song.file_path;
+            nowPlayingTitle.textContent = song.title;
+            nowPlayingArtist.textContent = song.artist;
+            nowPlayingImg.src = song.image_path;
+            nowPlaying.style.display = 'flex';
+            
+            audioPlayer.play()
+                .then(() => {
+                    playPauseBtn.textContent = '⏸';
+                })
+                .catch(error => {
+                    console.error('Playback failed:', error);
+                    alert('Failed to play the song. Please try again.');
+                });
+            
+            searchResults.style.display = 'none';
+            searchInput.value = '';
+        }
+
+        // Player controls
+        playPauseBtn.addEventListener('click', () => {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                playPauseBtn.textContent = '⏸';
+            } else {
+                audioPlayer.pause();
+                playPauseBtn.textContent = '▶';
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentSongIndex > 0) {
+                playSong(currentSongIndex - 1);
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentSongIndex < searchResultSongs.length - 1) {
+                playSong(currentSongIndex + 1);
+            }
+        });
+
+        // Close player button
+        closePlayerBtn.addEventListener('click', () => {
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+            nowPlaying.style.display = 'none';
+            playPauseBtn.textContent = '▶';
+        });
+
+        // Close search results when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!searchInput.contains(event.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
+
+        // Audio player events
+        audioPlayer.addEventListener('ended', () => {
+            if (currentSongIndex < searchResultSongs.length - 1) {
+                playSong(currentSongIndex + 1);
+            } else {
+                playPauseBtn.textContent = '▶';
+            }
+        });
+
+        function toggleSidebar() {
+            var sidebar = document.getElementById("sidebar");
+            sidebar.style.left = (sidebar.style.left === "0px") ? "-250px" : "0px";
+        }
+
+        function createPlaylist() {
+            let playlistName = prompt("Enter playlist name:");
+            if (playlistName) {
+                let newPlaylist = document.createElement("div");
+                newPlaylist.className = "playlist-card";
+                newPlaylist.innerHTML = `
+                    <img src="static/images/default-playlist.jpg" class="playlist-image" alt="${playlistName}">
+                    <div class="playlist-name">${playlistName}</div>
+                `;
+                document.getElementById("userPlaylist").appendChild(newPlaylist);
+            }
+        }
+    </script>
+</body>
+</html>
